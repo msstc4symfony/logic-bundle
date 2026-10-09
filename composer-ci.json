@@ -1,0 +1,71 @@
+{
+  "name": "msstc4symfony/logic-bundle",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Maxim Shamaev",
+      "email": "maxim.shamaev@gmail.com"
+    }
+  ],
+  "type": "symfony-bundle",
+  "description": "Use-case contracts for Symfony: Action/Input/Output plus a middleware pipeline (logging, validation, locking) around every action (CI profile — CI-only tools)",
+  "minimum-stability": "stable",
+  "keywords": [
+    "php",
+    "symfony",
+    "use-case",
+    "hexagonal"
+  ],
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Msstc4Symfony\\LogicBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Msstc4Symfony\\LogicBundle\\Test\\": "tests/"
+    }
+  },
+  "require": {
+    "php": ">=8.4",
+    "composer-runtime-api": ">=2.2",
+    "psr/container": "^1.1|^2.0",
+    "psr/log": "^3.0",
+    "symfony/config": "^7.4|^8.0",
+    "symfony/dependency-injection": "^7.4|^8.0",
+    "symfony/http-kernel": "^7.4|^8.0",
+    "symfony/lock": "^7.4|^8.0",
+    "symfony/validator": "^7.4|^8.0"
+  },
+  "require-dev": {
+    "deptrac/deptrac": "^4.6",
+    "friendsofphp/php-cs-fixer": "^3.55",
+    "infection/infection": "^0.32",
+    "phpstan/extension-installer": "^1.4",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/phpstan-strict-rules": "^2.0",
+    "phpstan/phpstan-symfony": "^2.0",
+    "phpunit/phpunit": ">=11.0",
+    "rector/rector": "^2.1",
+    "roave/backward-compatibility-check": "^8.20",
+    "roave/security-advisories": "dev-latest"
+  },
+  "config": {
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "infection/extension-installer": true
+    },
+    "sort-packages": true
+  },
+  "conflict": {
+    "symfony/error-handler": "<7.4.17 || >=8.0,<8.1.5",
+    "symfony/symfony": "*"
+  },
+  "extra": {
+    "symfony": {
+      "allow-contrib": false,
+      "require": "^7.4|^8.0"
+    }
+  }
+}

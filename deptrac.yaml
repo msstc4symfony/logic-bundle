@@ -1,0 +1,61 @@
+deptrac:
+    paths:
+        - ./src
+
+    exclude_files:
+        - '#.*test.*#i'
+
+    layers:
+        - name: Application
+          collectors:
+              - type: directory
+                value: src/Application/.*
+
+        - name: Framework
+          collectors:
+              - type: directory
+                value: src/Framework/.*
+
+        - name: Infrastructure
+          collectors:
+              - type: directory
+                value: src/Infrastructure/.*
+
+        - name: Presentation
+          collectors:
+              - type: directory
+                value: src/Presentation/.*
+
+        - name: DependencyInjection
+          collectors:
+              - type: directory
+                value: src/DependencyInjection/.*
+
+        - name: BundleRoot
+          collectors:
+              - type: classLike
+                value: Msstc4Symfony\\LogicBundle\\LogicBundle
+
+    ruleset:
+        # Contracts, the pipeline, logging and lock contracts: no outward knowledge.
+        Application: ~
+
+        # Symfony Validator integration.
+        Framework:
+            - Application
+
+        # symfony/lock adapter.
+        Infrastructure:
+            - Application
+
+        # kernel.exception listener.
+        Presentation:
+            - Application
+
+        # The compiler pass reads Action attributes; service ids are strings.
+        DependencyInjection:
+            - Application
+
+        BundleRoot:
+            - Application
+            - DependencyInjection

@@ -1,0 +1,139 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Msstc4Symfony\LogicBundle\Application\Logging;
+
+use Closure;
+use Msstc4Symfony\LogicBundle\Application\Action\Attribute\AsAction;
+use Msstc4Symfony\LogicBundle\Application\Action\ExpectedFailureInterface;
+use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
+use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
+use Msstc4Symfony\LogicBundle\Application\Logging\Builder\ActionNameBuilderInterface;
+use Msstc4Symfony\LogicBundle\Application\Logging\Builder\InputBuilderInterface;
+use Msstc4Symfony\LogicBundle\Application\Logging\Builder\OutputBuilderInterface;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Throwable;
+
+#[AsActionMiddleware(priority: self::PRIORITY)]
+final readonly class LoggingMiddleware implements ActionMiddlewareInterface
+{
+    public const int PRIORITY = 300;
+
+    /**
+     * @param iterable<array-key, ActionNameBuilderInterface> $actionNameBuilders
+     * @param iterable<array-key, InputBuilderInterface> $inputBuilders
+     * @param iterable<array-key, OutputBuilderInterface> $outputBuilders
+     */
+    public function __construct(
+        private LoggerInterface $logger,
+        #[AutowireIterator(ActionNameBuilderInterface::class)]
+        private iterable $actionNameBuilders = [],
+        #[AutowireIterator(InputBuilderInterface::class)]
+        private iterable $inputBuilders = [],
+        #[AutowireIterator(OutputBuilderInterface::class)]
+        private iterable $outputBuilders = [],
+    ) {
+    }
+
+    public function supports(ActionContext $context): bool
+    {
+        return $context->attribute(AsAction::class)->logging ?? true;
+    }
+
+    public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
+    {
+        $name = $this->actionName($context);
+        $logContext = [];
+        $inputContext = $this->inputContext($input, $name);
+        if ($inputContext !== null) {
+            $logContext['input'] = $inputContext;
+        }
+
+        $this->logger->info('Start application action ' . $name, $logContext);
+
+        try {
+            $output = $next($input);
+        } catch (Throwable $exception) {
+            // Symfony's own exception is listed too: it reaches here from validation inside an Action.
+            $level = $exception instanceof ExpectedFailureInterface || $exception instanceof ValidationFailedException
+                ? LogLevel::WARNING
+                : LogLevel::ERROR;
+            $this->logger->log($level, 'Fail application action ' . $name, [...$logContext, 'exception' => $exception]);
+
+            throw $exception;
+        }
+
+        $outputContext = $this->outputContext($output, $name);
+        if ($outputContext !== null) {
+            $logContext['output'] = $outputContext;
+        }
+
+        $this->logger->info('Finish application action ' . $name, $logContext);
+
+        return $output;
+    }
+
+    /**
+     * @return array<string, scalar|null>|null
+     */
+    private function inputContext(InputInterface $input, string $name): ?array
+    {
+        foreach ($this->inputBuilders as $builder) {
+            try {
+                if ($builder->supports($input)) {
+                    return $builder->build($input);
+                }
+            } catch (Throwable $exception) {
+                $this->builderFailed($name, $builder, $exception);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Runs after the Action committed its effects: a builder bug must not turn success into a failure.
+     *
+     * @return array<string, scalar|null>|null
+     */
+    private function outputContext(OutputInterface $output, string $name): ?array
+    {
+        foreach ($this->outputBuilders as $builder) {
+            try {
+                if ($builder->supports($output)) {
+                    return $builder->build($output);
+                }
+            } catch (Throwable $exception) {
+                $this->builderFailed($name, $builder, $exception);
+            }
+        }
+
+        return null;
+    }
+
+    private function builderFailed(string $name, object $builder, Throwable $exception): void
+    {
+        $this->logger->warning('Could not build the action log context', ['action' => $name, 'builder' => $builder::class, 'exception' => $exception]);
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    private function actionName(ActionContext $context): string
+    {
+        foreach ($this->actionNameBuilders as $builder) {
+            if ($builder->supports($context->actionClass)) {
+                return $builder->build($context->actionClass);
+            }
+        }
+
+        return $context->actionClass;
+    }
+}
