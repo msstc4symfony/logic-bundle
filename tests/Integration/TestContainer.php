@@ -25,7 +25,12 @@ final class TestContainer
      */
     public static function compile(array $config = [], ?Closure $register = null, bool $withLockFactory = true): ContainerBuilder
     {
-        $container = new ContainerBuilder(new ParameterBag(['kernel.environment' => 'test', 'kernel.debug' => false]));
+        $container = new ContainerBuilder(new ParameterBag([
+            'kernel.environment' => 'test',
+            'kernel.debug' => false,
+            // Symfony 7.4's PhpFileLoader reads it; 8.x does not.
+            'kernel.build_dir' => sys_get_temp_dir(),
+        ]));
         $bundle = new LogicBundle();
         $extension = $bundle->getContainerExtension() ?? throw new LogicException('LogicBundle has no extension.');
         $container->registerExtension($extension);
