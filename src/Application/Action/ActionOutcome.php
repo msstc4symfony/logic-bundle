@@ -21,7 +21,8 @@ enum ActionOutcome: string
         return match (true) {
             !$exception instanceof Throwable => self::Success,
             // Symfony's own exception is listed too: it reaches the pipeline from validation inside an Action.
-            $exception instanceof ExpectedFailureInterface, $exception instanceof ValidationFailedException => self::ExpectedFailure,
+            $exception instanceof ExpectedFailureInterface,
+            $exception instanceof ValidationFailedException => self::ExpectedFailure,
             default => self::Error,
         };
     }

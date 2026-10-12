@@ -36,7 +36,7 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
     public function __construct(
         private LoggerInterface $logger,
         #[AutowireIterator(ActionNameBuilderInterface::class)]
-        private iterable $actionNameBuilders = [],
+        iterable $actionNameBuilders = [],
         #[AutowireIterator(InputBuilderInterface::class)]
         private iterable $inputBuilders = [],
         #[AutowireIterator(OutputBuilderInterface::class)]
@@ -64,7 +64,8 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
         try {
             $output = $next($input);
         } catch (Throwable $exception) {
-            $level = ActionOutcome::of($exception) === ActionOutcome::ExpectedFailure ? LogLevel::WARNING : LogLevel::ERROR;
+            $outcome = ActionOutcome::of($exception);
+            $level = $outcome === ActionOutcome::ExpectedFailure ? LogLevel::WARNING : LogLevel::ERROR;
             $this->logger->log($level, 'Fail application action ' . $name, [...$logContext, 'exception' => $exception]);
 
             throw $exception;

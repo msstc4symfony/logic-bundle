@@ -176,13 +176,23 @@ msstc4symfony_logic:
 A bridge (metrics, tracing) is a middleware service; autoconfiguration registers it:
 
 ```php
+use Closure;
+use Msstc4Symfony\LogicBundle\Application\Action\ActionNameResolver;
+use Msstc4Symfony\LogicBundle\Application\Action\ActionOutcome;
+use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
+use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Throwable;
 
 #[AsActionMiddleware(priority: 400)]
 final readonly class TimingMiddleware implements ActionMiddlewareInterface
 {
+    public function __construct(private ActionNameResolver $names)
+    {
+    }
+
     public function supports(ActionContext $context): bool
     {
         return $context->attribute(NoTiming::class) === null;
@@ -191,10 +201,15 @@ final readonly class TimingMiddleware implements ActionMiddlewareInterface
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $start = hrtime(true);
+        $failure = null;
         try {
             return $next($input);
+        } catch (Throwable $exception) {
+            $failure = $exception;
+
+            throw $exception;
         } finally {
-            // record hrtime(true) - $start under $this->names->resolve($context) and ActionOutcome::of($failure)
+            // record (hrtime(true) - $start) / 1e9 under $this->names->resolve($context) and ActionOutcome::of($failure)->value
         }
     }
 }

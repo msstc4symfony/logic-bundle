@@ -4,7 +4,7 @@
 
 | Слой | Что | Зависит от |
 |---|---|---|
-| `Application/Action` | контракты `ActionInterface<TOutput>`, `InputInterface`, `OutputInterface`, `ExpectedFailureInterface`, `#[AsAction]`, `ActionNameResolver` и `ActionOutcome` (публичный API для мостов; `LoggingMiddleware` строит свой резолвер из своего итератора, чтобы сохранить BC конструктора) | — |
+| `Application/Action` | контракты `ActionInterface<TOutput>`, `InputInterface`, `OutputInterface`, `ExpectedFailureInterface`, `#[AsAction]`, `ActionNameResolver` и `ActionOutcome` (публичный API для мостов; `LoggingMiddleware` строит свой резолвер из своего итератора, чтобы сохранить BC конструктора) | `Application/Logging/Builder` (`ActionNameBuilderInterface`), `Application/Pipeline` (`ActionContext`), Symfony Validator (`ValidationFailedException`); в deptrac один слой Application, поэтому этот цикл namespace не контролируется |
 | `Application/Pipeline` | `ActionPipeline`, `ActionContext`, `ActionMiddlewareInterface`, `#[AsActionMiddleware]` | — |
 | `Application/Logging` | `LoggingMiddleware` (300), билдеры имени/input/output, `IdInputBuilder` (-1000) | — |
 | `Application/Lock` | `#[LockableAction]`, `KeyBuilderInterface`, `ActionNameKeyBuilder`, `LockProfile`, исключения | — |

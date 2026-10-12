@@ -30,3 +30,4 @@
 - `loadExtension()` типизирован shape `LogicConfig` с inline-ignore `method.childParameterType`
   (дважды: два родителя объявляют `array`).
 - Local `composer audit` без доступа к packagist падает — это песочница, CI проверяет.
+- `ActionOutcome` импортирует `ValidationFailedException` Symfony, поэтому `symfony/validator` должен оставаться жёсткой зависимостью; если он станет опциональным, в `ActionOutcome` нужен guard через `class_exists`.
