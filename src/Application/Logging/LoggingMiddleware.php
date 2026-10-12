@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Msstc4Symfony\LogicBundle\Application\Logging;
 
 use Closure;
+use Msstc4Symfony\LogicBundle\Application\Action\ActionNameResolver;
+use Msstc4Symfony\LogicBundle\Application\Action\ActionOutcome;
 use Msstc4Symfony\LogicBundle\Application\Action\Attribute\AsAction;
-use Msstc4Symfony\LogicBundle\Application\Action\ExpectedFailureInterface;
 use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
 use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Logging\Builder\ActionNameBuilderInterface;
@@ -18,13 +19,14 @@ use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
-use Symfony\Component\Validator\Exception\ValidationFailedException;
 use Throwable;
 
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LoggingMiddleware implements ActionMiddlewareInterface
 {
     public const int PRIORITY = 300;
+
+    private ActionNameResolver $names;
 
     /**
      * @param iterable<array-key, ActionNameBuilderInterface> $actionNameBuilders
@@ -40,6 +42,7 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
         #[AutowireIterator(OutputBuilderInterface::class)]
         private iterable $outputBuilders = [],
     ) {
+        $this->names = new ActionNameResolver($actionNameBuilders);
     }
 
     public function supports(ActionContext $context): bool
@@ -49,7 +52,7 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
 
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
-        $name = $this->actionName($context);
+        $name = $this->names->resolve($context);
         $logContext = [];
         $inputContext = $this->inputContext($input, $name);
         if ($inputContext !== null) {
@@ -61,10 +64,7 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
         try {
             $output = $next($input);
         } catch (Throwable $exception) {
-            // Symfony's own exception is listed too: it reaches here from validation inside an Action.
-            $level = $exception instanceof ExpectedFailureInterface || $exception instanceof ValidationFailedException
-                ? LogLevel::WARNING
-                : LogLevel::ERROR;
+            $level = ActionOutcome::of($exception) === ActionOutcome::ExpectedFailure ? LogLevel::WARNING : LogLevel::ERROR;
             $this->logger->log($level, 'Fail application action ' . $name, [...$logContext, 'exception' => $exception]);
 
             throw $exception;
@@ -121,19 +121,5 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
     private function builderFailed(string $name, object $builder, Throwable $exception): void
     {
         $this->logger->warning('Could not build the action log context', ['action' => $name, 'builder' => $builder::class, 'exception' => $exception]);
-    }
-
-    /**
-     * @return non-empty-string
-     */
-    private function actionName(ActionContext $context): string
-    {
-        foreach ($this->actionNameBuilders as $builder) {
-            if ($builder->supports($context->actionClass)) {
-                return $builder->build($context->actionClass);
-            }
-        }
-
-        return $context->actionClass;
     }
 }

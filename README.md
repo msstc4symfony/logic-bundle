@@ -194,11 +194,15 @@ final readonly class TimingMiddleware implements ActionMiddlewareInterface
         try {
             return $next($input);
         } finally {
-            // record hrtime(true) - $start for $context->actionClass
+            // record hrtime(true) - $start under $this->names->resolve($context) and ActionOutcome::of($failure)
         }
     }
 }
 ```
+
+Inject `ActionNameResolver` for the same Action name the logs use, and classify failures with
+`ActionOutcome::of($exception)` (`success`, `expected_failure`, `error`). Ready-made bridges:
+`msstc4symfony/metrics-bridge-logic`, `msstc4symfony/profiling-bridge-logic`.
 
 `supports()` is asked once per Action service. `ActionContext::attribute()` reads the Action's
 class attributes; attributes of classes that are not installed are skipped, so an optional

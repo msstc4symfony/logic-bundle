@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Msstc4Symfony\LogicBundle\Application\Action\ActionNameResolver;
 use Msstc4Symfony\LogicBundle\Application\Lock\ActionNameKeyBuilder;
 use Msstc4Symfony\LogicBundle\Application\Logging\Builder\IdInputBuilder;
 use Msstc4Symfony\LogicBundle\Application\Logging\LoggingMiddleware;
@@ -43,4 +44,5 @@ return static function (ContainerConfigurator $container): void {
 
     $services->set(ActionNameKeyBuilder::class);
     $services->set(IdInputBuilder::class);
+    $services->set(ActionNameResolver::class);
 };
