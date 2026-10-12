@@ -9,9 +9,11 @@ use Msstc4Symfony\LogicBundle\Application\Logging\Builder\ActionNameBuilderInter
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\EchoAction;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ActionNameResolver::class)]
+#[UsesClass(ActionContext::class)]
 final class ActionNameResolverTest extends TestCase
 {
     public function testFallsBackToTheActionClass(): void
