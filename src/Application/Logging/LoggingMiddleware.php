@@ -24,7 +24,7 @@ use Throwable;
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LoggingMiddleware implements ActionMiddlewareInterface
 {
-    public const int PRIORITY = 300;
+    public const PRIORITY = 300;
 
     private ActionNameResolver $names;
 

@@ -19,25 +19,25 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class WrapActionsPass implements CompilerPassInterface
 {
-    public const string ACTION_TAG = 'msstc4symfony_logic.action';
+    public const ACTION_TAG = 'msstc4symfony_logic.action';
 
-    public const string MIDDLEWARE_TAG = 'msstc4symfony_logic.middleware';
+    public const MIDDLEWARE_TAG = 'msstc4symfony_logic.middleware';
 
-    public const string LOGGING_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.logging';
+    public const LOGGING_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.logging';
 
-    public const string VALIDATION_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.validation';
+    public const VALIDATION_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.validation';
 
-    public const string LOCK_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.lock';
+    public const LOCK_MIDDLEWARE_ID = 'msstc4symfony_logic.middleware.lock';
 
-    public const string LOCK_LISTENER_ID = 'msstc4symfony_logic.lock_conflict_listener';
+    public const LOCK_LISTENER_ID = 'msstc4symfony_logic.lock_conflict_listener';
 
-    public const string PROFILES_PARAMETER = 'msstc4symfony_logic.lock.profiles';
+    public const PROFILES_PARAMETER = 'msstc4symfony_logic.lock.profiles';
 
-    public const string DEFAULT_PROFILE_PARAMETER = 'msstc4symfony_logic.lock.default_profile';
+    public const DEFAULT_PROFILE_PARAMETER = 'msstc4symfony_logic.lock.default_profile';
 
-    public const string LOCK_FACTORY_PARAMETER = 'msstc4symfony_logic.lock.factory';
+    public const LOCK_FACTORY_PARAMETER = 'msstc4symfony_logic.lock.factory';
 
-    public const string CONFLICT_STATUS_PARAMETER = 'msstc4symfony_logic.lock.conflict_status_code';
+    public const CONFLICT_STATUS_PARAMETER = 'msstc4symfony_logic.lock.conflict_status_code';
 
     public function process(ContainerBuilder $container): void
     {

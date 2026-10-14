@@ -29,7 +29,7 @@ final readonly class ActionContext
     public static function of(string $actionClass): self
     {
         $attributes = [];
-        foreach (new ReflectionClass($actionClass)->getAttributes() as $attribute) {
+        foreach ((new ReflectionClass($actionClass))->getAttributes() as $attribute) {
             $name = $attribute->getName();
             if (!class_exists($name) || isset($attributes[$name])) {
                 continue;

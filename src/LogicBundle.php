@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
 final class LogicBundle extends AbstractBundle
 {
     /** @var array<string, LockProfileSpec> */
-    public const array BUILT_IN_PROFILES = [
+    public const BUILT_IN_PROFILES = [
         'short' => ['ttl' => 5, 'retry_count' => 5, 'retry_delay_ms' => 100],
         'long' => ['ttl' => 300, 'retry_count' => 0, 'retry_delay_ms' => 0],
     ];

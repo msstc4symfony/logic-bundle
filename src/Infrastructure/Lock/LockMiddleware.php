@@ -28,7 +28,7 @@ use Throwable;
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LockMiddleware implements ActionMiddlewareInterface
 {
-    public const int PRIORITY = 100;
+    public const PRIORITY = 100;
 
     /** @var array<string, LockProfile> */
     private array $profiles;

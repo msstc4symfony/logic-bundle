@@ -25,7 +25,7 @@ final class LockConflictExceptionListenerTest extends TestCase
         $conflict = new LockConflictException('k');
         $event = $this->event($conflict);
 
-        new LockConflictExceptionListener($status)($event);
+        (new LockConflictExceptionListener($status))($event);
 
         $mapped = $event->getThrowable();
         self::assertInstanceOf(HttpException::class, $mapped);
@@ -37,7 +37,7 @@ final class LockConflictExceptionListenerTest extends TestCase
     {
         $event = $this->event(new LockConflictException('customer@example.com'));
 
-        new LockConflictExceptionListener(409)($event);
+        (new LockConflictExceptionListener(409))($event);
 
         self::assertStringNotContainsString('customer@example.com', $event->getThrowable()->getMessage());
     }
@@ -47,7 +47,7 @@ final class LockConflictExceptionListenerTest extends TestCase
         $wrapper = new RuntimeException('wrapped', previous: new LockConflictException('k'));
         $event = $this->event($wrapper);
 
-        new LockConflictExceptionListener(409)($event);
+        (new LockConflictExceptionListener(409))($event);
 
         $mapped = $event->getThrowable();
         self::assertInstanceOf(HttpException::class, $mapped);
@@ -59,7 +59,7 @@ final class LockConflictExceptionListenerTest extends TestCase
         $http = new NotFoundHttpException('gone', new LockConflictException('k'));
         $event = $this->event($http);
 
-        new LockConflictExceptionListener(409)($event);
+        (new LockConflictExceptionListener(409))($event);
 
         self::assertSame($http, $event->getThrowable());
     }
@@ -69,7 +69,7 @@ final class LockConflictExceptionListenerTest extends TestCase
         $other = new RuntimeException('other');
         $event = $this->event($other);
 
-        new LockConflictExceptionListener(409)($event);
+        (new LockConflictExceptionListener(409))($event);
 
         self::assertSame($other, $event->getThrowable());
     }

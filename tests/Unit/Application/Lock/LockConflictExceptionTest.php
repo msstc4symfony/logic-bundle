@@ -11,6 +11,6 @@ final class LockConflictExceptionTest extends TestCase
 {
     public function testMessageNamesTheKey(): void
     {
-        self::assertSame('The lock "order-1" is held by another call.', new LockConflictException('order-1')->getMessage());
+        self::assertSame('The lock "order-1" is held by another call.', (new LockConflictException('order-1'))->getMessage());
     }
 }

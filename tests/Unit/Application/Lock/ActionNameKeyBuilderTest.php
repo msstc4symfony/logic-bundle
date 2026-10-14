@@ -14,6 +14,6 @@ final class ActionNameKeyBuilderTest extends TestCase
 {
     public function testKeyIsTheActionClass(): void
     {
-        self::assertSame(EchoAction::class, new ActionNameKeyBuilder()->build(new FixtureInput(), ActionContext::of(EchoAction::class)));
+        self::assertSame(EchoAction::class, (new ActionNameKeyBuilder())->build(new FixtureInput(), ActionContext::of(EchoAction::class)));
     }
 }

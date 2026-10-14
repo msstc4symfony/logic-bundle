@@ -21,7 +21,7 @@ final class ValidationMiddlewareTest extends TestCase
 {
     public function testValidInputReachesTheAction(): void
     {
-        $output = new ValidationMiddleware(TestValidator::create())->handle(
+        $output = (new ValidationMiddleware(TestValidator::create()))->handle(
             new FixtureInput(name: 'ok'),
             ActionContext::of(EchoAction::class),
             static fn (InputInterface $input): OutputInterface => new FixtureOutput('reached'),
@@ -35,7 +35,7 @@ final class ValidationMiddlewareTest extends TestCase
         $input = new FixtureInput(name: '');
 
         try {
-            new ValidationMiddleware(TestValidator::create())->handle(
+            (new ValidationMiddleware(TestValidator::create()))->handle(
                 $input,
                 ActionContext::of(EchoAction::class),
                 static fn (InputInterface $input): never => self::fail('The action must not run.'),

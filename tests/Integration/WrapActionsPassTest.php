@@ -33,7 +33,7 @@ use Symfony\Component\Lock\LockFactory;
 
 final class WrapActionsPassTest extends TestCase
 {
-    private const array NO_RETRY = ['lock' => ['profiles' => ['short' => ['ttl' => 5, 'retry_count' => 0]]]];
+    private const NO_RETRY = ['lock' => ['profiles' => ['short' => ['ttl' => 5, 'retry_count' => 0]]]];
 
     public function testWrapsAnAutoconfiguredActionWithoutConfiguration(): void
     {

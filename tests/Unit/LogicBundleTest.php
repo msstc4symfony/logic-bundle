@@ -11,6 +11,6 @@ final class LogicBundleTest extends TestCase
 {
     public function testExtensionAlias(): void
     {
-        self::assertSame('msstc4symfony_logic', new LogicBundle()->getContainerExtension()?->getAlias());
+        self::assertSame('msstc4symfony_logic', (new LogicBundle())->getContainerExtension()?->getAlias());
     }
 }

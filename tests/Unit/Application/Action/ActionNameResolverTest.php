@@ -18,7 +18,7 @@ final class ActionNameResolverTest extends TestCase
 {
     public function testFallsBackToTheActionClass(): void
     {
-        self::assertSame(EchoAction::class, new ActionNameResolver()->resolve(ActionContext::of(EchoAction::class)));
+        self::assertSame(EchoAction::class, (new ActionNameResolver())->resolve(ActionContext::of(EchoAction::class)));
     }
 
     public function testTheFirstSupportingBuilderWins(): void
@@ -33,11 +33,11 @@ final class ActionNameResolverTest extends TestCase
      */
     private function builder(bool $supports, string $name): ActionNameBuilderInterface
     {
-        return new readonly class($supports, $name) implements ActionNameBuilderInterface {
+        return new class($supports, $name) implements ActionNameBuilderInterface {
             /**
              * @param non-empty-string $name
              */
-            public function __construct(private bool $supports, private string $name)
+            public function __construct(private readonly bool $supports, private readonly string $name)
             {
             }
 

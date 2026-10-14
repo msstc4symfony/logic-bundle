@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class ValidationMiddleware implements ActionMiddlewareInterface
 {
-    public const int PRIORITY = 200;
+    public const PRIORITY = 200;
 
     public function __construct(private ValidatorInterface $validator)
     {

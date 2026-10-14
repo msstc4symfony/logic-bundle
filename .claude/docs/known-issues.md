@@ -31,3 +31,10 @@
   (дважды: два родителя объявляют `array`).
 - Local `composer audit` без доступа к packagist падает — это песочница, CI проверяет.
 - `ActionOutcome` импортирует `ValidationFailedException` Symfony, поэтому `symfony/validator` должен оставаться жёсткой зависимостью; если он станет опциональным, в `ActionOutcome` нужен guard через `class_exists`.
+- **Код должен разбираться на PHP 8.2** (с 2026-10-14 UTC, bundle-standard v2.0.0, профиль `php82`): без
+  типизированных констант (`const string X`), без `new readonly class` (оба — 8.3) и без `new X()->m()` /
+  `new X()(...)` (8.4) — только `(new X())->m()`. PHPStan (`phpVersion.min: 80200`) ловит типизированные
+  константы; остальное ловят только `php -l` в job «minimal» (PHP 8.2) и ячейки PHPUnit на 8.2. Шаблоны Rector
+  (`withPhpVersion(PHP_82)`) и CS-Fixer (`new_expression_parentheses`) синтаксис обратно не поднимают.
+  `#[Override]` (8.3) допустим: на 8.2 атрибут не инстанцируется. `array_any/all/find` (8.4) — только с
+  `symfony/polyfill-php84` в `require`. Symfony 8 ставится только на PHP 8.4+.

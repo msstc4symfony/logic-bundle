@@ -7,7 +7,7 @@ Guidance for Claude Code in this repository. Deep references live under `.claude
 Symfony bundle (`msstc4symfony/logic-bundle`, namespace `Msstc4Symfony\LogicBundle`) with
 use-case contracts (`ActionInterface` / `InputInterface` / `OutputInterface`) and a middleware
 pipeline wrapped around every Action service: logging, validation and locking built in,
-custom middleware via `ActionMiddlewareInterface`. PHP >= 8.4, Symfony 7.4 / 8.x. Library code only.
+custom middleware via `ActionMiddlewareInterface`. PHP >= 8.2, Symfony 7.4 / 8.x. Library code only.
 
 ## Common commands
 

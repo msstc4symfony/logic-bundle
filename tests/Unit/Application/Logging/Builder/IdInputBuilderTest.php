@@ -36,13 +36,13 @@ final class IdInputBuilderTest extends TestCase
             }
         };
 
-        self::assertSame(['id' => 'uid-1'], new IdInputBuilder()->build($input));
+        self::assertSame(['id' => 'uid-1'], (new IdInputBuilder())->build($input));
     }
 
     public function testInputWithoutPublicIdIsNotSupported(): void
     {
-        $input = new readonly class implements InputInterface {
-            public function __construct(private string $id = 'hidden')
+        $input = new class implements InputInterface {
+            public function __construct(private readonly string $id = 'hidden')
             {
             }
 
@@ -52,7 +52,7 @@ final class IdInputBuilderTest extends TestCase
             }
         };
 
-        self::assertFalse(new IdInputBuilder()->supports($input));
-        self::assertSame([], new IdInputBuilder()->build($input));
+        self::assertFalse((new IdInputBuilder())->supports($input));
+        self::assertSame([], (new IdInputBuilder())->build($input));
     }
 }

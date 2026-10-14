@@ -72,7 +72,7 @@ final class LoggingMiddlewareTest extends TestCase
     public function testFailingBuildersDoNotChangeTheOutcome(): void
     {
         $logger = new RecordingLogger();
-        $broken = new readonly class implements InputBuilderInterface, OutputBuilderInterface {
+        $broken = new class implements InputBuilderInterface, OutputBuilderInterface {
             public function build(InputInterface|OutputInterface $value): array
             {
                 throw new RuntimeException('builder bug');
@@ -84,7 +84,7 @@ final class LoggingMiddlewareTest extends TestCase
             }
         };
 
-        $output = new LoggingMiddleware($logger, [], [$broken], [$broken])->handle(new FixtureInput(name: 'x'), ActionContext::of(EchoAction::class), $this->echo());
+        $output = (new LoggingMiddleware($logger, [], [$broken], [$broken]))->handle(new FixtureInput(name: 'x'), ActionContext::of(EchoAction::class), $this->echo());
 
         self::assertEquals(new FixtureOutput('x'), $output);
         self::assertSame([
@@ -99,7 +99,7 @@ final class LoggingMiddlewareTest extends TestCase
     public function testFailingBuilderIsSkippedForTheNextOneAndNamedInTheWarning(): void
     {
         $logger = new RecordingLogger();
-        $broken = new readonly class implements InputBuilderInterface {
+        $broken = new class implements InputBuilderInterface {
             public function build(InputInterface $input): array
             {
                 throw new RuntimeException('builder bug');
@@ -111,7 +111,7 @@ final class LoggingMiddlewareTest extends TestCase
             }
         };
 
-        new LoggingMiddleware($logger, [], [$broken, $this->inputBuilder('next')])->handle(new FixtureInput(), ActionContext::of(EchoAction::class), $this->echo());
+        (new LoggingMiddleware($logger, [], [$broken, $this->inputBuilder('next')]))->handle(new FixtureInput(), ActionContext::of(EchoAction::class), $this->echo());
 
         self::assertSame(['action' => EchoAction::class, 'builder' => $broken::class], array_intersect_key($logger->records[0]['context'], ['action' => 0, 'builder' => 0]));
         self::assertSame(['input' => ['builder' => 'next']], $logger->records[1]['context']);
@@ -123,7 +123,7 @@ final class LoggingMiddlewareTest extends TestCase
         $failure = new RuntimeException('down');
 
         try {
-            new LoggingMiddleware($logger, [], [new IdInputBuilder()])->handle(new FixtureInput('order-9'), ActionContext::of(EchoAction::class), static fn (InputInterface $input): never => throw $failure);
+            (new LoggingMiddleware($logger, [], [new IdInputBuilder()]))->handle(new FixtureInput('order-9'), ActionContext::of(EchoAction::class), static fn (InputInterface $input): never => throw $failure);
         } catch (RuntimeException) {
         }
 
@@ -145,7 +145,7 @@ final class LoggingMiddlewareTest extends TestCase
             }
         };
 
-        new LoggingMiddleware($logger, [$short])->handle(new FixtureInput(), ActionContext::of(EchoAction::class), $this->echo());
+        (new LoggingMiddleware($logger, [$short]))->handle(new FixtureInput(), ActionContext::of(EchoAction::class), $this->echo());
 
         self::assertSame('Start application action echo', $logger->records[0]['message']);
     }
@@ -187,8 +187,8 @@ final class LoggingMiddlewareTest extends TestCase
 
     private function inputBuilder(string $name): InputBuilderInterface
     {
-        return new readonly class($name) implements InputBuilderInterface {
-            public function __construct(private string $name)
+        return new class($name) implements InputBuilderInterface {
+            public function __construct(private readonly string $name)
             {
             }
 
@@ -206,8 +206,8 @@ final class LoggingMiddlewareTest extends TestCase
 
     private function outputBuilder(string $name): OutputBuilderInterface
     {
-        return new readonly class($name) implements OutputBuilderInterface {
-            public function __construct(private string $name)
+        return new class($name) implements OutputBuilderInterface {
+            public function __construct(private readonly string $name)
             {
             }
 

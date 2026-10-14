@@ -27,7 +27,7 @@ use Symfony\Component\Lock\Store\InMemoryStore;
 
 final class LockMiddlewareTest extends TestCase
 {
-    private const array PROFILES = [
+    private const PROFILES = [
         'short' => ['ttl' => 5, 'retry_count' => 2, 'retry_delay_ms' => 0],
         'long' => ['ttl' => 300, 'retry_count' => 0, 'retry_delay_ms' => 0],
     ];

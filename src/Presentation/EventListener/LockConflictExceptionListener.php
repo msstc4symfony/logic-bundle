@@ -13,7 +13,7 @@ use Throwable;
 final readonly class LockConflictExceptionListener
 {
     // Lock keys may carry business identifiers; error renderers can show this message to the client.
-    private const string MESSAGE = 'The resource is being changed by another request.';
+    private const MESSAGE = 'The resource is being changed by another request.';
 
     public function __construct(private int $statusCode)
     {

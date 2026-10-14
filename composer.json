@@ -28,7 +28,7 @@
     }
   },
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.2",
     "composer-runtime-api": ">=2.2",
     "psr/container": "^1.1|^2.0",
     "psr/log": "^3.0",
@@ -39,7 +39,7 @@
     "symfony/validator": "^7.4|^8.0"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.55",
+    "friendsofphp/php-cs-fixer": "^3.76",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "phpstan/phpstan-strict-rules": "^2.0",

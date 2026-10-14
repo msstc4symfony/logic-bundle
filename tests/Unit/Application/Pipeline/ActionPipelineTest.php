@@ -20,7 +20,7 @@ final class ActionPipelineTest extends TestCase
     {
         $action = new EchoAction();
 
-        $output = new ActionPipeline($action, EchoAction::class, [])->__invoke(new FixtureInput(name: 'x'));
+        $output = (new ActionPipeline($action, EchoAction::class, []))->__invoke(new FixtureInput(name: 'x'));
 
         self::assertEquals(new FixtureOutput('x'), $output);
         self::assertCount(1, $action->calls);
