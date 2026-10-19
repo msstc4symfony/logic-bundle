@@ -7,6 +7,7 @@ namespace Msstc4Symfony\LogicBundle\Test\Unit\Application\Logging\Builder;
 use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
 use Msstc4Symfony\LogicBundle\Application\Logging\Builder\IdInputBuilder;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\FixtureInput;
+use Override;
 use PHPUnit\Framework\TestCase;
 use Stringable;
 
@@ -28,6 +29,7 @@ final class IdInputBuilderTest extends TestCase
             public function __construct()
             {
                 $this->id = new class implements Stringable {
+                    #[Override]
                     public function __toString(): string
                     {
                         return 'uid-1';

@@ -15,6 +15,7 @@ use Msstc4Symfony\LogicBundle\Application\Lock\LockProfile;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Lock\Exception\LockConflictedException;
@@ -24,6 +25,8 @@ use Throwable;
 
 /**
  * @phpstan-import-type LockProfileSpec from LockProfile
+ *
+ * @internal
  */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LockMiddleware implements ActionMiddlewareInterface
@@ -48,11 +51,13 @@ final readonly class LockMiddleware implements ActionMiddlewareInterface
         $this->profiles = array_map(LockProfile::fromSpec(...), $profiles);
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         return $context->attribute(LockableAction::class) instanceof LockableAction;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $lockable = $context->attribute(LockableAction::class);

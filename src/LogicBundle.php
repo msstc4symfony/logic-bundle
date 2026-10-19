@@ -11,6 +11,7 @@ use Msstc4Symfony\LogicBundle\Application\Logging\Builder\InputBuilderInterface;
 use Msstc4Symfony\LogicBundle\Application\Logging\Builder\OutputBuilderInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\DependencyInjection\CompilerPass\WrapActionsPass;
+use Override;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -36,6 +37,7 @@ final class LogicBundle extends AbstractBundle
 
     protected string $extensionAlias = 'msstc4symfony_logic';
 
+    #[Override]
     public function configure(DefinitionConfigurator $definition): void
     {
         $definition->rootNode()
@@ -80,7 +82,8 @@ final class LogicBundle extends AbstractBundle
      *
      * @param LogicConfig $config
      */
-    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void // @phpstan-ignore method.childParameterType, method.childParameterType
+    #[Override] // @phpstan-ignore method.childParameterType, method.childParameterType
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
         $lock = $config['lock'];
         $profiles = [...self::BUILT_IN_PROFILES, ...$lock['profiles']];
@@ -110,6 +113,7 @@ final class LogicBundle extends AbstractBundle
         }
     }
 
+    #[Override]
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);

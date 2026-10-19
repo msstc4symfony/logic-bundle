@@ -8,6 +8,7 @@ use Msstc4Symfony\LogicBundle\Application\Action\ActionNameResolver;
 use Msstc4Symfony\LogicBundle\Application\Logging\Builder\ActionNameBuilderInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\EchoAction;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -41,11 +42,13 @@ final class ActionNameResolverTest extends TestCase
             {
             }
 
+            #[Override]
             public function build(string $actionClass): string
             {
                 return $this->name;
             }
 
+            #[Override]
             public function supports(string $actionClass): bool
             {
                 return $this->supports;

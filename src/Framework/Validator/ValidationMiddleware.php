@@ -11,8 +11,12 @@ use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @internal
+ */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class ValidationMiddleware implements ActionMiddlewareInterface
 {
@@ -22,11 +26,13 @@ final readonly class ValidationMiddleware implements ActionMiddlewareInterface
     {
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         return $context->attribute(AsAction::class)->validation ?? true;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $violations = $this->validator->validate($input);

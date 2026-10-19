@@ -11,12 +11,16 @@ use Msstc4Symfony\LogicBundle\Application\Lock\KeyBuilderInterface;
 use Msstc4Symfony\LogicBundle\Application\Lock\LockableAction;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionPipeline;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Symfony\Component\DependencyInjection\Argument\IteratorArgument;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @internal
+ */
 final class WrapActionsPass implements CompilerPassInterface
 {
     public const ACTION_TAG = 'msstc4symfony_logic.action';
@@ -39,6 +43,7 @@ final class WrapActionsPass implements CompilerPassInterface
 
     public const CONFLICT_STATUS_PARAMETER = 'msstc4symfony_logic.lock.conflict_status_code';
 
+    #[Override]
     public function process(ContainerBuilder $container): void
     {
         $actions = $this->actions($container);

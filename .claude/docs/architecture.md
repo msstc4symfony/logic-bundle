@@ -14,6 +14,11 @@
 | `DependencyInjection/CompilerPass` | `WrapActionsPass` | Application |
 | `LogicBundle` | конфиг-дерево, параметры, автоконфигурация | Application, DependencyInjection |
 
+`deptrac.yaml` — шаблон bundle-standard v3 (восемь канонических слоёв, `BundleRoot` = `^…\\LogicBundle$`);
+ruleset сужен до таблицы выше. Публичный API — раздел README «Public API»; всё остальное `@internal`
+(с 1.3.0): `ActionPipeline`, `LoggingMiddleware`, `ActionNameKeyBuilder`, `LockProfile`, `ValidationMiddleware`,
+`LockMiddleware`, `LockConflictExceptionListener`, `WrapActionsPass`.
+
 Application-слой бандла импортирует атрибуты Symfony DI (`AutowireIterator`, `AsTaggedItem`) и
 `Symfony\...\ValidationFailedException` (уровень лога): осознанно, deptrac проверяет только
 внутренние слои, бандл и так зависит от Symfony.

@@ -10,6 +10,8 @@ use InvalidArgumentException;
  * Lock profile as configured under msstc4symfony_logic.lock.profiles.
  *
  * @phpstan-type LockProfileSpec array{ttl: positive-int, retry_count: non-negative-int, retry_delay_ms: non-negative-int}
+ *
+ * @internal
  */
 final readonly class LockProfile
 {

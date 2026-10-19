@@ -187,6 +187,7 @@ use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Throwable;
 
 #[AsActionMiddleware(priority: 400)]
@@ -196,11 +197,13 @@ final readonly class TimingMiddleware implements ActionMiddlewareInterface
     {
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         return $context->attribute(NoTiming::class) === null;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $start = hrtime(true);
@@ -225,6 +228,22 @@ Inject `ActionNameResolver` for the same Action name the logs use, and classify 
 `supports()` is asked once per Action service. `ActionContext::attribute()` reads the Action's
 class attributes; attributes of classes that are not installed are skipped, so an optional
 bridge's attribute never breaks an Action.
+
+## Public API
+
+Applications and bridges use or implement only these; every other class is `@internal` and may change in a minor
+release.
+
+| Namespace `Msstc4Symfony\LogicBundle\` | Classes |
+|---|---|
+| `Application\Action` | `ActionInterface`, `InputInterface`, `OutputInterface`, `ExpectedFailureInterface`, `ActionOutcome`, `ActionNameResolver`, `Attribute\AsAction` |
+| `Application\Lock` | `LockableAction`, `KeyBuilderInterface`, `LockConflictException`, `KeyBuildingFailedException` |
+| `Application\Logging\Builder` | `ActionNameBuilderInterface`, `InputBuilderInterface`, `OutputBuilderInterface`, `IdInputBuilder` |
+| `Application\Pipeline` | `ActionMiddlewareInterface`, `ActionContext`, `Attribute\AsActionMiddleware` |
+| `Framework\Validator` | `ValidationFailedException` |
+| (root) | `LogicBundle` |
+
+Configuration keys under `msstc4symfony_logic` (see [Locking](#locking) and [Logging](#logging)) are public too.
 
 ## Migrating from tapfiliate/logic-bundle
 

@@ -38,3 +38,12 @@
   (`withPhpVersion(PHP_82)`) и CS-Fixer (`new_expression_parentheses`) синтаксис обратно не поднимают.
   `#[Override]` (8.3) допустим: на 8.2 атрибут не инстанцируется. `array_any/all/find` (8.4) — только с
   `symfony/polyfill-php84` в `require`. Symfony 8 ставится только на PHP 8.4+.
+
+## Потребители читают `@internal`-классы в тестах (с 1.3.0)
+
+Kernel-тесты мостов (`metrics-`, `profiling-`, `tracing-bridge-logic`: `tests/Integration/KernelBridgeTest.php`) и
+showcase (`apps/orders/tests/Integration/CreateOrderActionWiringTest.php`) проверяют порядок middleware
+рефлексией по `ActionPipeline::$middlewares` и ссылаются на `LoggingMiddleware`. Оба класса `@internal`: их
+переименование или смена приватного поля в миноре сломает эти тесты, а не код потребителей. Перед такой правкой —
+grep по соседним репозиториям; публичного способа узнать порядок middleware пока нет.
+

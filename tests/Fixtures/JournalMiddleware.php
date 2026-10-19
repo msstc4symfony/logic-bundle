@@ -9,6 +9,7 @@ use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
 use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
+use Override;
 
 final class JournalMiddleware implements ActionMiddlewareInterface
 {
@@ -25,6 +26,7 @@ final class JournalMiddleware implements ActionMiddlewareInterface
     ) {
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         $this->supportsCalls++;
@@ -32,6 +34,7 @@ final class JournalMiddleware implements ActionMiddlewareInterface
         return $this->supported;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $this->journal->add('>' . $this->name);

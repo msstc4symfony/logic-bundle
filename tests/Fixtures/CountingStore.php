@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Msstc4Symfony\LogicBundle\Test\Fixtures;
 
+use Override;
 use RuntimeException;
 use Symfony\Component\Lock\Exception\LockConflictedException;
 use Symfony\Component\Lock\Key;
@@ -28,6 +29,7 @@ final class CountingStore implements PersistingStoreInterface
     ) {
     }
 
+    #[Override]
     public function save(Key $key): void
     {
         $this->saves++;
@@ -38,6 +40,7 @@ final class CountingStore implements PersistingStoreInterface
         $this->held[(string) $key] = true;
     }
 
+    #[Override]
     public function delete(Key $key): void
     {
         if ($this->failOnDelete) {
@@ -47,6 +50,7 @@ final class CountingStore implements PersistingStoreInterface
         unset($this->held[(string) $key]);
     }
 
+    #[Override]
     public function exists(Key $key): bool
     {
         if ($this->failOnExists) {
@@ -56,6 +60,7 @@ final class CountingStore implements PersistingStoreInterface
         return isset($this->held[(string) $key]);
     }
 
+    #[Override]
     public function putOffExpiration(Key $key, float $ttl): void
     {
         $this->lastTtl = $ttl;

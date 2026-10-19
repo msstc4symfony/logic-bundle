@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0 - 2026-10-19
+
+- Changed: classes outside the README "Public API" are `@internal`: `ActionPipeline`, `LoggingMiddleware`,
+  `ActionNameKeyBuilder`, `LockProfile`, `ValidationMiddleware`, `LockMiddleware`, `LockConflictExceptionListener`, `WrapActionsPass`.
+- Changed: every overriding or implementing method carries `#[\Override]`.
+- Changed: adopts bundle-standard v3 — canonical `deptrac.yaml` layers (anchored `BundleRoot`, no `exclude_files`).
+
 ## 1.2.0 - 2026-10-14
 
 - Changed: requires PHP 8.2 instead of 8.4 (Symfony 8 still needs PHP 8.4).

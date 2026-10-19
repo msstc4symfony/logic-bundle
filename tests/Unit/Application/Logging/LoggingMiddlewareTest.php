@@ -19,6 +19,7 @@ use Msstc4Symfony\LogicBundle\Test\Fixtures\FixtureInput;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\FixtureOutput;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\QuietAction;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\RecordingLogger;
+use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -32,11 +33,13 @@ final class LoggingMiddlewareTest extends TestCase
     {
         $logger = new RecordingLogger();
         $outputBuilder = new class implements OutputBuilderInterface {
+            #[Override]
             public function build(OutputInterface $output): array
             {
                 return ['echo' => $output instanceof FixtureOutput ? $output->echo : null];
             }
 
+            #[Override]
             public function supports(OutputInterface $output): bool
             {
                 return true;
@@ -73,11 +76,13 @@ final class LoggingMiddlewareTest extends TestCase
     {
         $logger = new RecordingLogger();
         $broken = new class implements InputBuilderInterface, OutputBuilderInterface {
+            #[Override]
             public function build(InputInterface|OutputInterface $value): array
             {
                 throw new RuntimeException('builder bug');
             }
 
+            #[Override]
             public function supports(InputInterface|OutputInterface $value): bool
             {
                 return true;
@@ -100,11 +105,13 @@ final class LoggingMiddlewareTest extends TestCase
     {
         $logger = new RecordingLogger();
         $broken = new class implements InputBuilderInterface {
+            #[Override]
             public function build(InputInterface $input): array
             {
                 throw new RuntimeException('builder bug');
             }
 
+            #[Override]
             public function supports(InputInterface $input): bool
             {
                 return true;
@@ -134,11 +141,13 @@ final class LoggingMiddlewareTest extends TestCase
     {
         $logger = new RecordingLogger();
         $short = new class implements ActionNameBuilderInterface {
+            #[Override]
             public function build(string $actionClass): string
             {
                 return 'echo';
             }
 
+            #[Override]
             public function supports(string $actionClass): bool
             {
                 return true;
@@ -192,11 +201,13 @@ final class LoggingMiddlewareTest extends TestCase
             {
             }
 
+            #[Override]
             public function build(InputInterface $input): array
             {
                 return ['builder' => $this->name];
             }
 
+            #[Override]
             public function supports(InputInterface $input): bool
             {
                 return true;
@@ -211,11 +222,13 @@ final class LoggingMiddlewareTest extends TestCase
             {
             }
 
+            #[Override]
             public function build(OutputInterface $output): array
             {
                 return ['builder' => $this->name];
             }
 
+            #[Override]
             public function supports(OutputInterface $output): bool
             {
                 return true;

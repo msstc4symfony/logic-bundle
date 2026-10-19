@@ -10,6 +10,7 @@ use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Symfony\Component\Lock\LockFactory;
 
 /**
@@ -22,11 +23,13 @@ final readonly class InnerProbe implements ActionMiddlewareInterface
     {
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         return true;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $this->journal->add($this->locks->createLock($context->actionClass)->acquire() ? 'inner lock-free' : 'inner lock-held');

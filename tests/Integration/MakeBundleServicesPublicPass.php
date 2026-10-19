@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Msstc4Symfony\LogicBundle\Test\Integration;
 
+use Override;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 final class MakeBundleServicesPublicPass implements CompilerPassInterface
 {
+    #[Override]
     public function process(ContainerBuilder $container): void
     {
         foreach ($container->getDefinitions() as $id => $definition) {

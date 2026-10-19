@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Msstc4Symfony\LogicBundle\Application\Logging\Builder;
 
 use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
+use Override;
 use Stringable;
 use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 
@@ -15,6 +16,7 @@ use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 #[AsTaggedItem(priority: -1000)]
 final readonly class IdInputBuilder implements InputBuilderInterface
 {
+    #[Override]
     public function build(InputInterface $input): array
     {
         $id = $this->id($input);
@@ -22,6 +24,7 @@ final readonly class IdInputBuilder implements InputBuilderInterface
         return $id === null ? [] : ['id' => $id];
     }
 
+    #[Override]
     public function supports(InputInterface $input): bool
     {
         return $this->id($input) !== null;

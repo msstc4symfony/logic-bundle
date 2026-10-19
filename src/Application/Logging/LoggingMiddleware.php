@@ -16,11 +16,15 @@ use Msstc4Symfony\LogicBundle\Application\Logging\Builder\OutputBuilderInterface
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionContext;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
+use Override;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Throwable;
 
+/**
+ * @internal
+ */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LoggingMiddleware implements ActionMiddlewareInterface
 {
@@ -45,11 +49,13 @@ final readonly class LoggingMiddleware implements ActionMiddlewareInterface
         $this->names = new ActionNameResolver($actionNameBuilders);
     }
 
+    #[Override]
     public function supports(ActionContext $context): bool
     {
         return $context->attribute(AsAction::class)->logging ?? true;
     }
 
+    #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
         $name = $this->names->resolve($context);
