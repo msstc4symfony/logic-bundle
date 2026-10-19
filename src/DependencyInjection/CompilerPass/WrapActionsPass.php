@@ -18,9 +18,6 @@ use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-/**
- * @internal
- */
 final class WrapActionsPass implements CompilerPassInterface
 {
     public const ACTION_TAG = 'msstc4symfony_logic.action';

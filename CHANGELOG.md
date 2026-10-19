@@ -2,8 +2,8 @@
 
 ## 1.3.0 - 2026-10-19
 
-- Changed: classes outside the README "Public API" are `@internal`: `ActionPipeline`, `LoggingMiddleware`,
-  `ActionNameKeyBuilder`, `LockProfile`, `ValidationMiddleware`, `LockMiddleware`, `LockConflictExceptionListener`, `WrapActionsPass`.
+- Added: README "Public API" lists the classes applications and bridges may use; the rest becomes `@internal` in 2.0
+  (marking it now would break BC in a minor).
 - Changed: every overriding or implementing method carries `#[\Override]`.
 - Changed: adopts bundle-standard v3 — canonical `deptrac.yaml` layers (anchored `BundleRoot`, no `exclude_files`).
 

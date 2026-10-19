@@ -14,9 +14,6 @@ use Msstc4Symfony\LogicBundle\Application\Pipeline\Attribute\AsActionMiddleware;
 use Override;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @internal
- */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class ValidationMiddleware implements ActionMiddlewareInterface
 {

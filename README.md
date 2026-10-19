@@ -231,8 +231,8 @@ bridge's attribute never breaks an Action.
 
 ## Public API
 
-Applications and bridges use or implement only these; every other class is `@internal` and may change in a minor
-release.
+Applications and bridges use or implement only these. Every other class is an implementation detail: it will be
+marked `@internal` in 2.0 and should not be referenced.
 
 | Namespace `Msstc4Symfony\LogicBundle\` | Classes |
 |---|---|
