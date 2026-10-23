@@ -10,6 +10,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Throwable;
 
+/**
+ * @internal
+ */
 final readonly class LockConflictExceptionListener
 {
     // Lock keys may carry business identifiers; error renderers can show this message to the client.

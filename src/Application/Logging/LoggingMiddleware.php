@@ -22,6 +22,9 @@ use Psr\Log\LogLevel;
 use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Throwable;
 
+/**
+ * @internal
+ */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LoggingMiddleware implements ActionMiddlewareInterface
 {

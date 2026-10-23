@@ -10,6 +10,8 @@ use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
 
 /**
  * @implements ActionInterface<OutputInterface>
+ *
+ * @internal
  */
 final class ActionPipeline implements ActionInterface
 {

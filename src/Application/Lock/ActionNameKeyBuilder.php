@@ -10,6 +10,8 @@ use Override;
 
 /**
  * One key per Action class: every call of that Action runs one at a time across the system.
+ *
+ * @internal
  */
 final readonly class ActionNameKeyBuilder implements KeyBuilderInterface
 {

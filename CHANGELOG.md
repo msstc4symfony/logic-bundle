@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.0-rc.1 - 2026-10-23
+
+- Changed: the classes outside README "Public API" are marked `@internal`, as announced in 1.3.0: `ActionPipeline`,
+  `LoggingMiddleware`, `ValidationMiddleware`, `LockMiddleware`, `LockProfile`, `ActionNameKeyBuilder`,
+  `LockConflictExceptionListener`, `WrapActionsPass`. No code changes: an application that only uses the public API
+  upgrades by widening its constraint to `^2.0`.
+
 ## 1.3.0 - 2026-10-19
 
 - Added: README "Public API" lists the classes applications and bridges may use; the rest becomes `@internal` in 2.0

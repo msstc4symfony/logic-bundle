@@ -25,6 +25,8 @@ use Throwable;
 
 /**
  * @phpstan-import-type LockProfileSpec from LockProfile
+ *
+ * @internal
  */
 #[AsActionMiddleware(priority: self::PRIORITY)]
 final readonly class LockMiddleware implements ActionMiddlewareInterface
