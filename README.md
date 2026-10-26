@@ -229,6 +229,21 @@ Inject `ActionNameResolver` for the same Action name the logs use, and classify 
 class attributes; attributes of classes that are not installed are skipped, so an optional
 bridge's attribute never breaks an Action.
 
+To check the order in a test, read it from the Action service: it implements `MiddlewareChainInterface` (unless the
+application decorates the service itself), and `middlewares()` lists the middlewares that support this Action,
+outermost first. The interface is for calling only; the bundle implements it.
+
+```php
+use Msstc4Symfony\LogicBundle\Application\Logging\LoggingMiddleware;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\MiddlewareChainInterface;
+
+$action = static::getContainer()->get(CreateOrder::class);
+self::assertInstanceOf(MiddlewareChainInterface::class, $action);
+$classes = array_map(static fn (ActionMiddlewareInterface $middleware): string => $middleware::class, $action->middlewares());
+self::assertSame([TimingMiddleware::class, LoggingMiddleware::class], array_slice($classes, 0, 2));
+```
+
 ## Public API
 
 Applications and bridges use or implement only these. Every other class is `@internal` (since 2.0) and may change in
@@ -239,7 +254,7 @@ any release.
 | `Application\Action` | `ActionInterface`, `InputInterface`, `OutputInterface`, `ExpectedFailureInterface`, `ActionOutcome`, `ActionNameResolver`, `Attribute\AsAction` |
 | `Application\Lock` | `LockableAction`, `KeyBuilderInterface`, `LockConflictException`, `KeyBuildingFailedException` |
 | `Application\Logging\Builder` | `ActionNameBuilderInterface`, `InputBuilderInterface`, `OutputBuilderInterface`, `IdInputBuilder` |
-| `Application\Pipeline` | `ActionMiddlewareInterface`, `ActionContext`, `Attribute\AsActionMiddleware` |
+| `Application\Pipeline` | `ActionMiddlewareInterface`, `ActionContext`, `MiddlewareChainInterface` (call only), `Attribute\AsActionMiddleware` |
 | `Framework\Validator` | `ValidationFailedException` |
 | (root) | `LogicBundle` |
 

@@ -52,6 +52,35 @@ final class ActionPipelineTest extends TestCase
         self::assertSame(1, $skipped->supportsCalls);
     }
 
+    public function testListsTheSupportedMiddlewaresOutermostFirst(): void
+    {
+        $journal = new Journal();
+        $outer = new JournalMiddleware('outer', $journal);
+        $skipped = new JournalMiddleware('skipped', $journal, supported: false);
+        $inner = new JournalMiddleware('inner', $journal);
+        $pipeline = new ActionPipeline(new EchoAction(), EchoAction::class, [$outer, $skipped, $inner]);
+
+        $chain = $pipeline->middlewares();
+        self::assertSame([$outer, $inner], $chain);
+        self::assertSame($chain, $pipeline->middlewares());
+        $pipeline(new FixtureInput());
+        self::assertSame(1, $skipped->supportsCalls);
+        self::assertSame(['>outer', '>inner', '<inner', '<outer'], $journal->entries);
+    }
+
+    public function testEveryMiddlewareGetsOneContextPerService(): void
+    {
+        $middleware = new JournalMiddleware('m', new Journal());
+        $pipeline = new ActionPipeline(new EchoAction(), EchoAction::class, [$middleware]);
+
+        $pipeline(new FixtureInput());
+        $pipeline(new FixtureInput());
+
+        self::assertCount(3, $middleware->contexts);
+        self::assertSame($middleware->contexts[0], $middleware->contexts[1]);
+        self::assertSame($middleware->contexts[0], $middleware->contexts[2]);
+    }
+
     public function testActionReceivesTheInputAMiddlewarePassedOn(): void
     {
         $action = new EchoAction();

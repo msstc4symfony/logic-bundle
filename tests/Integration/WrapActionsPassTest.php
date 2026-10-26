@@ -7,9 +7,14 @@ namespace Msstc4Symfony\LogicBundle\Test\Integration;
 use Closure;
 use InvalidArgumentException;
 use Msstc4Symfony\LogicBundle\Application\Lock\LockConflictException;
+use Msstc4Symfony\LogicBundle\Application\Logging\LoggingMiddleware;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionPipeline;
+use Msstc4Symfony\LogicBundle\Application\Pipeline\MiddlewareChainInterface;
 use Msstc4Symfony\LogicBundle\DependencyInjection\CompilerPass\WrapActionsPass;
 use Msstc4Symfony\LogicBundle\Framework\Validator\ValidationFailedException;
+use Msstc4Symfony\LogicBundle\Framework\Validator\ValidationMiddleware;
+use Msstc4Symfony\LogicBundle\Infrastructure\Lock\LockMiddleware;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\EchoAction;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\FirstNameInputBuilder;
 use Msstc4Symfony\LogicBundle\Test\Fixtures\FixtureInput;
@@ -71,6 +76,26 @@ final class WrapActionsPassTest extends TestCase
 
         self::assertSame(['outer'], $journal->entries, 'validation stops before the lock is taken');
         self::assertSame('warning Fail application action ' . LockableEchoAction::class, $this->logger($container)->lines()[3] ?? null, 'logging wraps validation');
+    }
+
+    public function testTheWrappedActionListsItsMiddlewaresOutermostFirst(): void
+    {
+        $container = TestContainer::compile(self::NO_RETRY, static function (ContainerBuilder $container): void {
+            self::actions(LockableEchoAction::class, EchoAction::class)($container);
+            $container->register(Journal::class)->setPublic(true);
+            foreach ([OuterProbe::class, MiddleProbe::class, InnerProbe::class] as $probe) {
+                $container->register($probe)->setAutowired(true)->setAutoconfigured(true);
+            }
+        });
+
+        self::assertSame(
+            [LoggingMiddleware::class, OuterProbe::class, ValidationMiddleware::class, MiddleProbe::class, LockMiddleware::class, InnerProbe::class],
+            $this->middlewareClasses($container->get(LockableEchoAction::class)),
+        );
+        self::assertSame(
+            [LoggingMiddleware::class, OuterProbe::class, ValidationMiddleware::class, MiddleProbe::class, InnerProbe::class],
+            $this->middlewareClasses($container->get(EchoAction::class)),
+        );
     }
 
     public function testAsActionSwitchesValidationAndLoggingOff(): void
@@ -230,6 +255,16 @@ final class WrapActionsPassTest extends TestCase
         $action(new FixtureInput());
 
         self::assertSame(['>first', '>second', '<second', '<first'], $journal->entries);
+    }
+
+    /**
+     * @return list<class-string<ActionMiddlewareInterface>>
+     */
+    private function middlewareClasses(?object $action): array
+    {
+        self::assertInstanceOf(MiddlewareChainInterface::class, $action);
+
+        return array_map(static fn (ActionMiddlewareInterface $middleware): string => $middleware::class, $action->middlewares());
     }
 
     /**

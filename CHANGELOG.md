@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0 - 2026-10-26
+
+- Added: `Application\Pipeline\MiddlewareChainInterface`. A wrapped Action service implements it; `middlewares()` lists
+  the middlewares that support the Action, outermost first, so tests can check the order without reflection on the
+  internal `ActionPipeline`.
+
 ## 2.0.0 - 2026-10-23
 
 - Final release of 2.0.0-rc.1, unchanged, after the bundles showcase e2e ran green on it.

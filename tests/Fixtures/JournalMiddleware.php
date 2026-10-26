@@ -15,6 +15,9 @@ final class JournalMiddleware implements ActionMiddlewareInterface
 {
     public int $supportsCalls = 0;
 
+    /** @var list<ActionContext> every context supports() and handle() got, in call order */
+    public array $contexts = [];
+
     /**
      * @param (Closure(InputInterface): InputInterface)|null $replaceInput
      */
@@ -30,6 +33,7 @@ final class JournalMiddleware implements ActionMiddlewareInterface
     public function supports(ActionContext $context): bool
     {
         $this->supportsCalls++;
+        $this->contexts[] = $context;
 
         return $this->supported;
     }
@@ -37,6 +41,7 @@ final class JournalMiddleware implements ActionMiddlewareInterface
     #[Override]
     public function handle(InputInterface $input, ActionContext $context, Closure $next): OutputInterface
     {
+        $this->contexts[] = $context;
         $this->journal->add('>' . $this->name);
         $output = $next($this->replaceInput instanceof Closure ? ($this->replaceInput)($input) : $input);
         $this->journal->add('<' . $this->name);

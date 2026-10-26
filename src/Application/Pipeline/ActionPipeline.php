@@ -7,14 +7,16 @@ namespace Msstc4Symfony\LogicBundle\Application\Pipeline;
 use Msstc4Symfony\LogicBundle\Application\Action\ActionInterface;
 use Msstc4Symfony\LogicBundle\Application\Action\InputInterface;
 use Msstc4Symfony\LogicBundle\Application\Action\OutputInterface;
+use Override;
 
 /**
  * @implements ActionInterface<OutputInterface>
  *
  * @internal
  */
-final class ActionPipeline implements ActionInterface
+final class ActionPipeline implements ActionInterface, MiddlewareChainInterface
 {
+    // Both are derived from the class alone, so long-running workers may keep them.
     private ?ActionContext $context = null;
 
     /** @var list<ActionMiddlewareInterface>|null */
@@ -34,19 +36,34 @@ final class ActionPipeline implements ActionInterface
 
     public function __invoke(InputInterface $input): OutputInterface
     {
-        // Both are derived from the class alone, so long-running workers may keep them.
-        $context = $this->context ??= ActionContext::of($this->actionClass);
-        $this->chain ??= array_values(array_filter(
+        return $this->next($this->middlewares(), 0, $input, $this->context());
+    }
+
+    /**
+     * @return list<ActionMiddlewareInterface>
+     */
+    #[Override]
+    public function middlewares(): array
+    {
+        $context = $this->context();
+
+        return $this->chain ??= array_values(array_filter(
             iterator_to_array($this->middlewares, false),
             static fn (ActionMiddlewareInterface $middleware): bool => $middleware->supports($context),
         ));
-
-        return $this->next(0, $input, $context);
     }
 
-    private function next(int $position, InputInterface $input, ActionContext $context): OutputInterface
+    private function context(): ActionContext
     {
-        $middleware = $this->chain[$position] ?? null;
+        return $this->context ??= ActionContext::of($this->actionClass);
+    }
+
+    /**
+     * @param list<ActionMiddlewareInterface> $chain
+     */
+    private function next(array $chain, int $position, InputInterface $input, ActionContext $context): OutputInterface
+    {
+        $middleware = $chain[$position] ?? null;
         if ($middleware === null) {
             return $this->inner->__invoke($input);
         }
@@ -54,7 +71,7 @@ final class ActionPipeline implements ActionInterface
         return $middleware->handle(
             $input,
             $context,
-            fn (InputInterface $input): OutputInterface => $this->next($position + 1, $input, $context),
+            fn (InputInterface $input): OutputInterface => $this->next($chain, $position + 1, $input, $context),
         );
     }
 }
