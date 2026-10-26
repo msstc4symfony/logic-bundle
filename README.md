@@ -234,14 +234,13 @@ application decorates the service itself), and `middlewares()` lists the middlew
 outermost first. The interface is for calling only; the bundle implements it.
 
 ```php
-use Msstc4Symfony\LogicBundle\Application\Logging\LoggingMiddleware;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\ActionMiddlewareInterface;
 use Msstc4Symfony\LogicBundle\Application\Pipeline\MiddlewareChainInterface;
 
 $action = static::getContainer()->get(CreateOrder::class);
 self::assertInstanceOf(MiddlewareChainInterface::class, $action);
 $classes = array_map(static fn (ActionMiddlewareInterface $middleware): string => $middleware::class, $action->middlewares());
-self::assertSame([TimingMiddleware::class, LoggingMiddleware::class], array_slice($classes, 0, 2));
+self::assertSame(TimingMiddleware::class, $classes[0] ?? null); // priority 400: outside the built-ins
 ```
 
 ## Public API
